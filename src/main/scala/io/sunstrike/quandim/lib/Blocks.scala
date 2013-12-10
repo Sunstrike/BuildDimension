@@ -2,9 +2,9 @@ package io.sunstrike.quandim.lib
 
 import io.sunstrike.quandim.lib.Config._
 import mantle.blocks.MantleBlock
-import io.sunstrike.quandim.blocks.{BlockPortalController, BlockPortalFrame}
+import io.sunstrike.quandim.blocks.{BlockPortal, BlockPortalController, BlockPortalFrame}
 import cpw.mods.fml.common.registry.GameRegistry
-import io.sunstrike.quandim.blocks.tiles.{TilePortalController, TilePortalFrame}
+import io.sunstrike.quandim.blocks.tiles.{TilePortal, TilePortalController, TilePortalFrame}
 
 /**
  * Block storage
@@ -18,7 +18,7 @@ object Blocks {
     portalController = new BlockPortalController(portalControllerID)
     //portalStrongFrame = new BlockStrongFrame(portalStrongFrameID)
     //portalStrongController = new BlockStrongController(portalStrongControllerID)
-    //portal = new BlockPortal(portalID)
+    portal = new BlockPortal(portalID)
 
     registerBlocks()
   }
@@ -28,6 +28,9 @@ object Blocks {
     GameRegistry.registerTileEntity(classOf[TilePortalFrame], "portalFrame")
     GameRegistry.registerBlock(portalController, "portalController")
     GameRegistry.registerTileEntity(classOf[TilePortalController], "portalController")
+
+    GameRegistry.registerBlock(portal, "portal")
+    GameRegistry.registerTileEntity(classOf[TilePortal], "portal")
   }
 
   var portalFrame:MantleBlock = null

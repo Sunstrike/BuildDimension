@@ -67,4 +67,10 @@ class TilePortalFrame extends TileEntity with IServantLogic with IDebuggable {
     )
     new DebugData(player, getClass, strs)
   }
+
+  override def invalidate() {
+    super.invalidate()
+    notifyMasterOfChange()
+  }
+
 }
