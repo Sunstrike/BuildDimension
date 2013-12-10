@@ -98,6 +98,12 @@ class TilePortalController extends TileEntity with IDebuggable with IMasterLogic
       if (!worldObj.getBlockTileEntity(coord.x, coord.y, coord.z).isInstanceOf[TilePortalFrame]) return
     }
 
+    for (h <- 1 to horDiff)
+      frames :+= new CoordTuple(horDir.offsetX * h + xCoord, yCoord, horDir.offsetZ * h + zCoord)
+
+    for (v <- 1 to verDiff)
+      frames :+= new CoordTuple(xCoord, verDir.offsetY * v + yCoord, zCoord)
+
     for (bl <- frames)
       if (!worldObj.getBlockTileEntity(bl.x, bl.y, bl.z).asInstanceOf[IServantLogic].verifyMaster(this, worldObj, xCoord, yCoord, zCoord)) return
 
@@ -151,8 +157,10 @@ class TilePortalController extends TileEntity with IDebuggable with IMasterLogic
       return
     }
 
-    // Fail if blocks in portal space.
+    // Fail if blocks in portal space, remove old portal blocks
     for (bl <- blocks) {
+      if (worldObj.getBlockId(bl.x, bl.y, bl.z) == portal.blockID)
+        worldObj.destroyBlock(bl.x, bl.y, bl.z, false)
       if (!worldObj.isAirBlock(bl.x, bl.y, bl.z)) {
         logger.info(s"Apparently $bl is NOT an air block!")
         return
@@ -163,7 +171,7 @@ class TilePortalController extends TileEntity with IDebuggable with IMasterLogic
 
     for (bl <- blocks) {
       worldObj.setBlock(bl.x, bl.y, bl.z, portal.blockID)
-      logger.info(s"[Portal] Setting portal at $bl.x, $bl.y, $bl.z")
+      logger.info(s"[Portal] Setting portal at $bl")
     }
 
     portalActive = true
@@ -173,7 +181,7 @@ class TilePortalController extends TileEntity with IDebuggable with IMasterLogic
 
   // Fired by a player intersecting a portal block
   def portalEnteredByPlayer(player:EntityPlayer) {
-
+    logger.info("Intersected with " + this)
   }
 
   // IMasterLogic
@@ -187,6 +195,10 @@ class TilePortalController extends TileEntity with IDebuggable with IMasterLogic
   }
 
   override def invalidate() {
+    if (portalActive) createOrDestroyPortal(false)
+  }
+
+  override def onChunkUnload() {
     if (portalActive) createOrDestroyPortal(false)
   }
 
